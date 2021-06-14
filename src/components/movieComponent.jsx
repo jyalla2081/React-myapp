@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import * as movieApi from "../services/fakeMovieService";
 import * as genreApi from "../services/fakeGenreService";
+import _ from "lodash";
 
 import Pagination from "./Pagination";
 import { PaginationUtil } from "../utils/Pagination";
@@ -13,12 +14,13 @@ class MovieComponent extends Component {
     genreList: [],
     countPerPage: 5,
     activePage: 1,
+    sortColumn: { path: "title", order: "asc" },
   };
 
   componentDidMount() {
     this.setState({
       movieList: movieApi.getMovies(),
-      genreList: [{ name: "All Movies" }, ...genreApi.getGenres()],
+      genreList: [{ name: "All Movies", _id: "" }, ...genreApi.getGenres()],
     });
   }
 
@@ -36,6 +38,10 @@ class MovieComponent extends Component {
     this.setState({ selectedGenre: x, activePage: 1 });
   };
 
+  handleSort = (sortColumn) => {
+    this.setState({ sortColumn });
+  };
+
   likeToggle = (movie) => {
     const list = this.state.movieList;
     const index = this.state.movieList.indexOf(movie);
@@ -44,21 +50,25 @@ class MovieComponent extends Component {
   };
 
   render() {
-    const { movieList, activePage, countPerPage, selectedGenre, genreList } =
-      this.state;
+    const {
+      movieList,
+      activePage,
+      countPerPage,
+      selectedGenre,
+      genreList,
+      sortColumn,
+    } = this.state;
     const count = movieList.length;
     if (count === 0) return <p>No Movies to Display</p>;
+
     let filteredList =
       selectedGenre && selectedGenre._id
         ? movieList.filter((x) => x.genre._id === selectedGenre._id)
         : movieList;
-    console.log(filteredList);
 
-    var paginatedMovies = PaginationUtil(
-      filteredList,
-      activePage,
-      countPerPage
-    );
+    let sorted = _.orderBy(filteredList, [sortColumn.path], [sortColumn.order]);
+
+    var paginatedMovies = PaginationUtil(sorted, activePage, countPerPage);
 
     return (
       <div className="row">
@@ -77,6 +87,8 @@ class MovieComponent extends Component {
             movies={paginatedMovies}
             onLike={this.likeToggle}
             onDelete={this.deleteMovie}
+            sortColumn={sortColumn}
+            onSort={this.handleSort}
           ></MovieTable>
           <Pagination
             items={filteredList.length}

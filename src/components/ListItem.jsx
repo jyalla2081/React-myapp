@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 const ListItem = (props) => {
   const {
@@ -9,14 +9,12 @@ const ListItem = (props) => {
     handleSelectedGenre,
   } = props;
 
-  console.log(props);
-
   return (
     <ul className="list-group">
       {genreList.map((x) => (
         <li
           className={
-            x == selectedGenre ? "list-group-item active" : "list-group-item"
+            x === selectedGenre ? "list-group-item active" : "list-group-item"
           }
           key={x[idProperty]}
           onClick={() => handleSelectedGenre(x)}

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import _ from "lodash";
 import propTypes from "prop-types";
 
@@ -8,8 +8,7 @@ const Pagination = (props) => {
   const { items, countPerPage, onPageClick, activePage } = props;
 
   const pagesCnt = Math.ceil(items / countPerPage);
-  console.log(pagesCnt);
-  if (pagesCnt == 1) return "";
+  if (pagesCnt === 1) return "";
   const pages = _.range(1, pagesCnt + 1);
 
   return (
@@ -17,11 +16,11 @@ const Pagination = (props) => {
       {pages.map((x) => (
         <li
           key={x}
-          className={activePage == x ? "page-item active" : "page-item"}
+          className={activePage === x ? "page-item active" : "page-item"}
         >
-          <a className="page-link" onClick={() => onPageClick(x)}>
+          <button className="page-link" onClick={() => onPageClick(x)}>
             {x}
-          </a>
+          </button>
         </li>
       ))}
     </ul>
